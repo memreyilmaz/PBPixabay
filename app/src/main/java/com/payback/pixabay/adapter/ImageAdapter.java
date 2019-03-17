@@ -14,6 +14,8 @@ import com.squareup.picasso.Picasso;
 import java.util.List;
 
 import androidx.recyclerview.widget.RecyclerView;
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
 public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ImageAdapterViewHolder> {
 
@@ -25,15 +27,13 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ImageAdapter
     }
 
     public class ImageAdapterViewHolder extends RecyclerView.ViewHolder {
-        public ImageView posterImageView;
-        public TextView userNameTextView;
-        public TextView tagsTextView;
+        @BindView(R.id.main_imageView) ImageView posterImageView;
+        @BindView(R.id.user_name_textView) TextView userNameTextView;
+        @BindView(R.id.tag_textView) TextView tagsTextView;
 
-    public ImageAdapterViewHolder(View view) {
+        public ImageAdapterViewHolder(View view) {
         super(view);
-        posterImageView = view.findViewById(R.id.main_imageView);
-        userNameTextView = view.findViewById(R.id.user_name_textView);
-        tagsTextView = view.findViewById(R.id.tag_textView);
+        ButterKnife.bind(this, view);
 
         view.setOnClickListener(v -> clickListener.onItemClick(v, getAdapterPosition()));
         }

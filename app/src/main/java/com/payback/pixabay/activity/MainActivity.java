@@ -9,10 +9,10 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.payback.pixabay.ConnectionController;
-import com.payback.pixabay.model.ImageViewModel;
 import com.payback.pixabay.R;
 import com.payback.pixabay.adapter.ImageAdapter;
 import com.payback.pixabay.model.Hit;
+import com.payback.pixabay.model.ImageViewModel;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
@@ -21,24 +21,28 @@ import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.RecyclerView;
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
 import static com.payback.pixabay.Config.SEARCH_QUERY;
 import static com.payback.pixabay.Config.SELECTED_IMAGE;
 
 public class MainActivity extends AppCompatActivity {
-    RecyclerView imageRecyclerView;
+
+    @BindView(R.id.image) RecyclerView imageRecyclerView;
+    @BindView(R.id.main_activity_toolbar) Toolbar toolbar;
     private ImageAdapter mAdapter;
     AlertDialog.Builder builder;
     String searchQuery;
-    TextView emptyView;
     ImageViewModel imageViewModel;
-    Button retryButton;
+    @BindView(R.id.error_empty_view) TextView emptyView;
+    @BindView(R.id.retry_connection_check_button) Button retryButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        ButterKnife.bind(this);
         setUi();
         setRecyclerView();
         checkConnection();
@@ -65,6 +69,7 @@ public class MainActivity extends AppCompatActivity {
                 imageRecyclerView.setVisibility(View.GONE);
             }
         });
+
     }
 
     private void checkConnection(){
@@ -77,9 +82,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setUi(){
-        emptyView = findViewById(R.id.error_empty_view);
-        retryButton = findViewById(R.id.retry_connection_check_button);
-        Toolbar toolbar = findViewById(R.id.main_activity_toolbar);
         setSupportActionBar(toolbar);
         builder = new AlertDialog.Builder(this, R.style.AlertDialogStyle);
         retryButton.setOnClickListener(v -> {
@@ -94,7 +96,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setRecyclerView(){
-        imageRecyclerView = findViewById(R.id.image);
         imageRecyclerView.setHasFixedSize(true);
         mAdapter = new ImageAdapter();
         imageRecyclerView.setAdapter(mAdapter);
