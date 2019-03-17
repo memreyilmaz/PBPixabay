@@ -8,7 +8,7 @@
     <string name="share_with">Share Using</string>
     <string name="share_image_headline">Hello, I want to share this image from Pixabay with you;</string>
     <string name="no_results">Your search %1$s has no results.</string>
-    <string name="to_many_requests">You are making too many searches. Please try again later.</string>
     <string name="no_connection">Please Check Your Internet Connection</string>
-    <string name="a2">2</string>
+    <string name="retry">Retry</string>
+    <string name="fruits">fruits</string>
 </resources>

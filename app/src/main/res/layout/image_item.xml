@@ -22,7 +22,8 @@
 
             <TextView
                 android:id="@+id/user_name_textView"
-                style="@style/CardViewTextStyle" />
+                style="@style/CardViewTextStyle"
+                android:paddingBottom="@dimen/padding_0" />
 
             <TextView
                 android:id="@+id/tag_textView"

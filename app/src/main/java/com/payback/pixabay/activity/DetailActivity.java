@@ -46,7 +46,7 @@ public class DetailActivity extends AppCompatActivity {
     }
 
     private void setUi(){
-        bigImage = findViewById(R.id.detail_imageview);
+        bigImage = findViewById(R.id.detail_imageView);
         imageTags = findViewById(R.id.image_tags_textView);
         imageLikesCount= findViewById(R.id.image_likes_textView);
         imageFavouritesCount = findViewById(R.id.image_favourites_textView);
@@ -58,7 +58,7 @@ public class DetailActivity extends AppCompatActivity {
                 .error(R.drawable.pixabay)
                 .into(bigImage);
 
-        imageTags.setText(hit.getTags().replace(","," \u2022"));
+        imageTags.setText(hit.getTags().replace(","," /"));
         imageLikesCount.setText(String.valueOf(hit.getLikes()));
         imageFavouritesCount.setText(String.valueOf(hit.getFavorites()));
         imageCommentsCount.setText(String.valueOf(hit.getComments()));

@@ -1,7 +1,5 @@
-package com.payback.pixabay;
+package com.payback.pixabay.model;
 
-import com.payback.pixabay.model.Hit;
-import com.payback.pixabay.model.ImageResponse;
 import com.payback.pixabay.rest.PixabayApiClient;
 import com.payback.pixabay.rest.PixabayApiInterface;
 
@@ -19,20 +17,19 @@ public class ImageViewModel extends ViewModel {
 
     private MutableLiveData<List<Hit>> imageList;
 
-    public LiveData<List<Hit>> getImages(String searchquery) {
+    public LiveData<List<Hit>> getImages() {
         if (imageList == null) {
             imageList = new MutableLiveData<List<Hit>>();
-            loadImages(searchquery);
         }
         return imageList;
     }
 
-    private void loadImages(String searchquery) {
+    public void loadImages(String searchQuery) {
 
         PixabayApiInterface apiService = PixabayApiClient.getClient().create(PixabayApiInterface.class);
         String photo = "photo";
 
-        Call<ImageResponse> call = apiService.getSearched(searchquery, photo);
+        Call<ImageResponse> call = apiService.getSearched(searchQuery, photo);
         call.enqueue(new Callback<ImageResponse>() {
             @Override
             public void onResponse(Call<ImageResponse> call, Response<ImageResponse> response) {
@@ -42,7 +39,6 @@ public class ImageViewModel extends ViewModel {
 
                 imageList.setValue(response.body().getHits());
             }
-
             @Override
             public void onFailure(Call<ImageResponse> call, Throwable t) {
                 Timber.e(t.toString());

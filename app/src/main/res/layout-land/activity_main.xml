@@ -39,4 +39,10 @@
         android:layout_gravity="center|center_horizontal"
         android:visibility="gone"/>
 
+    <Button
+        android:id="@+id/retry_connection_check_button"
+        style="@style/ButtonStyle"
+        android:visibility="gone"
+        android:text="@string/retry"/>
+
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

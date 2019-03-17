@@ -35,19 +35,15 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ImageAdapter
         userNameTextView = view.findViewById(R.id.user_name_textView);
         tagsTextView = view.findViewById(R.id.tag_textView);
 
-        view.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                    clickListener.onItemClick(v, getAdapterPosition());
-                }
-        });
+        view.setOnClickListener(v -> clickListener.onItemClick(v, getAdapterPosition()));
         }
     }
 
     @Override
     public ImageAdapterViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         mContext = parent.getContext();
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.image_item, parent, false);
+        View view = LayoutInflater.from(parent.getContext())
+                .inflate(R.layout.image_item, parent, false);
 
         return new ImageAdapterViewHolder(view);
     }
@@ -57,7 +53,7 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ImageAdapter
 
         Hit hit = mImages.get(position);
         holder.userNameTextView.setText(hit.getUser());
-        holder.tagsTextView.setText(hit.getTags());
+        holder.tagsTextView.setText(hit.getTags().replace(","," /"));
         Picasso.with(mContext)
                 .load(hit.getPreviewURL())
                 .into(holder.posterImageView);
@@ -81,6 +77,10 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ImageAdapter
     public void setImageData(List<Hit> images) {
         mImages = images;
         notifyDataSetChanged();
+    }
+
+    public Hit getHitAtPosition(int position) {
+        return mImages.get(position);
     }
 
     public void setOnItemClickListener(ClickListener clickListener) {
