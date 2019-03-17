@@ -2,7 +2,6 @@ package com.payback.pixabay.activity;
 
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.res.Resources;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -10,11 +9,10 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.payback.pixabay.ConnectionController;
+import com.payback.pixabay.ImageViewModel;
 import com.payback.pixabay.R;
 import com.payback.pixabay.adapter.ImageAdapter;
 import com.payback.pixabay.model.Hit;
-import com.payback.pixabay.model.ImageResponse;
-import com.payback.pixabay.rest.PixabayApiClient;
 import com.payback.pixabay.rest.PixabayApiInterface;
 
 import java.util.List;
@@ -23,11 +21,9 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.Toolbar;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.RecyclerView;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
-import timber.log.Timber;
 
 import static com.payback.pixabay.Config.SELECTED_IMAGE;
 
@@ -38,10 +34,10 @@ public class MainActivity extends AppCompatActivity {
     private ImageAdapter mAdapter;
     private List<Hit> images;
     AlertDialog.Builder builder;
-    MenuItem searchItem;
     String searchquery = "fruits";
     TextView emptyView;
-
+    ImageViewModel imageViewModel;
+    String fruits = "fruits";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -61,7 +57,6 @@ public class MainActivity extends AppCompatActivity {
         imageRecyclerView.setHasFixedSize(true);
         mAdapter = new ImageAdapter();
         imageRecyclerView.setAdapter(mAdapter);
-        getImages();
         builder = new AlertDialog.Builder(this, R.style.AlertDialogStyle);
 
         mAdapter.setOnItemClickListener(new ImageAdapter.ClickListener() {
@@ -71,11 +66,28 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        imageViewModel = ViewModelProviders.of(this).get(ImageViewModel.class);
+        getImages(fruits);
+
+       /* imageViewModel.getImages(searchquery).observe(this, new Observer<List<Hit>>() {
+            @Override
+            public void onChanged(List<Hit> hits) {
+                mAdapter.setImageData(hits);
+                mAdapter.notifyDataSetChanged();
+            }
+        });*/
     }
 
-    private void getImages(){
-
-        apiService = PixabayApiClient.getClient().create(PixabayApiInterface.class);
+    private void getImages(String searchquery){
+        //todo clear list
+        imageViewModel.getImages(searchquery).observe(this, new Observer<List<Hit>>() {
+            @Override
+            public void onChanged(List<Hit> hits) {
+                mAdapter.setImageData(hits);
+                mAdapter.notifyDataSetChanged();
+            }
+        });
+       /* apiService = PixabayApiClient.getClient().create(PixabayApiInterface.class);
         String photo = "photo";
 
         Call<ImageResponse> call = apiService.getSearched(searchquery, photo);
@@ -102,17 +114,12 @@ public class MainActivity extends AppCompatActivity {
                     emptyView.setText(text);
                     emptyView.setVisibility(View.VISIBLE);
                 }
-
-
-
-
             }
-
             @Override
             public void onFailure(Call<ImageResponse> call, Throwable t) {
                 Timber.e(t.toString());
             }
-        });
+        });*/
     }
 
     private void showDetailActivity(int position){
@@ -139,62 +146,28 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.activity_main_action, menu);
-        searchItem = menu.findItem(R.id.action_bar_search_icon);
+        MenuItem searchItem = menu.findItem(R.id.action_bar_search_icon);
         SearchView searchView = (SearchView) searchItem.getActionView();
-        searchView.setOnQueryTextListener(searchListener);
-        return true;
-       /* SearchView searchView = null;
-        if (searchItem != null) {
-            searchView = (SearchView) searchItem.getActionView();
-        }
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+        SearchView.OnQueryTextListener searchListener = new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                return false;
+                searchItem.collapseActionView();
+                searchquery = query;
+                getImages(searchquery);
+                return true;
             }
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                searchForQuery();
-                return true;
+                return false;
             }
-        });*/
-
-        //return super.onCreateOptionsMenu(menu);
-
+        };
+        searchView.setOnQueryTextListener(searchListener);
+        return true;
     }
 
-    private SearchView.OnQueryTextListener searchListener = new SearchView.OnQueryTextListener() {
-        @Override
-        public boolean onQueryTextSubmit(String query) {
-            searchItem.collapseActionView();
-            searchquery = query;
-            getImages();
-            //resetImageList();
-            //progressBar.setVisibility(View.VISIBLE);
-            //noResults.setVisibility(View.GONE);
-            //loadImages(1, currentQuery);
-            return true;
-        }
-
-        @Override
-        public boolean onQueryTextChange(String newText) {
-            return false;
-        }
-    };
-
-  /*  @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.action_bar_search_icon:
-              //  searchPixabay();
-
-               MenuItem searchItem = menu.findItem(R.id.action_search);
-                SearchView searchView =
-                        (SearchView) searchItem.getActionView();
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
-    }*/
+    @Override
+    public void onBackPressed() {
+        moveTaskToBack(true);
+    }
 }
